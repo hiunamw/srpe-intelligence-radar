@@ -36,7 +36,18 @@ An automated End-to-End data pipeline that monitors, scrapes, and parses the Sal
 
 ### 2. 結構化成交數據庫 (Cleaned ROT Excel)
 從雜亂無章的 PDF 提取並清洗出成交數據，將特例排版（如子母座、特色戶 Simplex/Duplex 等）標準化，並輸出至 Excel。
-![Excel 數據清洗結果預覽](assets/rot_demo.png)
+
+PDF 原圖 (1): The Aperture
+![PDF 原圖預覽 (1)](assets/rot_demo_pdf_1.png)
+
+PDF 原圖 (2): Southland
+![PDF 原圖預覽 (2)](assets/rot_demo_pdf_2.png)
+
+清洗前
+![Excel 數據清洗結果預覽 (Before)](assets/rot_demo_before.png)
+
+清洗後
+![Excel 數據清洗結果預覽 (After)](assets/rot_demo_after.png)
 
 ## 🛠️ 技術棧 (Tech Stack)
 * **Language:** Python
