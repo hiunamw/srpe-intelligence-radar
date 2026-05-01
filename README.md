@@ -8,7 +8,7 @@
 An automated End-to-End data pipeline that monitors, scrapes, and parses the Sales of First-hand Residential Properties Electronic Platform (SRPE) in Hong Kong, delivering real-time Discord alerts and structured Excel reports daily.
 
 ## 📖 項目簡介 (Project Overview)
-本項目旨在自動化追蹤香港一手住宅物業市場的最新動態，為定價團隊 (Pricing Team) 及管理層提供極速的市場情報。系統採用「大一統模組化 (Mono-Repo)」設計，每日自動處理繁瑣的政府 PDF 文件。
+本項目旨在自動化追蹤香港一手住宅物業市場的最新動態，為定價團隊及管理層提供極速的市場情報。系統採用 Mono-Repo 設計，每日自動處理繁瑣的政府 PDF 文件。
 
 ## ✨ 核心模組 (Core Modules)
 
