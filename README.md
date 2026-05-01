@@ -60,6 +60,7 @@ playwright install chromium
 ## 📊 報告輸出範例 (Sample Output)
 
 推送至 Discord 的實時情報會自動套用 Markdown 格式，清晰區分各類文件及上載詳情：
+
 ![Discord 輸出結果圖](output.png)
 
 ## 🗺️ 未來規劃 (Roadmap)
