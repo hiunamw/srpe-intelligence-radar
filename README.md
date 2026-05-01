@@ -26,11 +26,17 @@ An automated End-to-End data pipeline that monitors, scrapes, and parses the Sal
 ## 📝 系統架構 (Architecture Diagram)
 ![系統架構圖](assets/architecture_diagram.svg)
 
-## 📊 報告輸出範例 (Sample Output)
+## 📊 輸出展示 (Sample Outputs)
 
-推送至 Discord 的實時情報會自動套用 Markdown 格式，清晰區分各類文件及上載詳情：
+本系統每日會自動生成兩種維度的情報輸出，兼顧「即時性」與「分析深度」：
 
-![Discord 輸出結果圖](assets/output.png)
+### 1. Discord 實時情報推送 (Real-time Alert)
+自動對長篇幅的銷售安排與樓盤異動進行格式化，並推送到 Discord 群組。
+![Discord 實時推送預覽](assets/discord_demo.png)
+
+### 2. 結構化成交數據庫 (Cleaned ROT Excel)
+從雜亂無章的 PDF 提取並清洗出成交數據，將特例排版（如子母座、特色戶 Simplex/Duplex 等）標準化，並輸出至 Excel。
+![Excel 數據清洗結果預覽](assets/rot_demo.png)
 
 ## 🛠️ 技術棧 (Tech Stack)
 * **Language:** Python
@@ -50,6 +56,12 @@ playwright install chromium
 ```
 
 ## 🗺️ 未來規劃 (Roadmap)
-- [ ] **NLP 支付條款解析**：運用 Text Mining 萃取價單「支付條款 (Terms)」內的實際折實價 (Net Price) 及折扣率。
-- [ ] **數據庫整合**：將每日洗淨的 DataFrame 匯入 PostgreSQL，建立歷史數據倉儲 (Data Warehouse)。
-- [ ] **BI 視覺化儀表板**：連接 PowerBI / Tableau，實時監控各發展商的推盤節奏與套現金額。
+- [ ] **支付條款 (Terms) 深度解析 (NLP / Text Mining)**：
+
+  目前系統完整保留了 ROT 的支付條款長文。下一步計劃引入 NLP 或 LLM 技術，從繁雜的條款中萃取出核心特徵，例如「折扣率 (Discount Rate)」、「提早成交回贈 (Cash Rebate)」及「付款期 (Payment Period)」，以計算最真實的折實價 (Net Price)。
+- [ ] **車位 (CP) 結構化分離**：
+
+  升級清洗引擎，以正則表達式精準提取車位號碼及數量，並轉換為獨立的數據維度 (`Has_CP`, `CP_Count`)，以提升平均呎價計算的準確度。
+- [ ] **數據庫整合與自動化 BI**：
+
+  將每日洗淨的 DataFrame 匯入 PostgreSQL，建立歷史數據倉儲 (Data Warehouse)，並直接串接 PowerBI / Tableau 進行實時可視化。
