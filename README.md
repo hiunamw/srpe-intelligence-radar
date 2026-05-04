@@ -34,7 +34,7 @@ An end-to-end automated data pipeline that monitors, scrapes, parses, and databa
 ## 🚀 Quick Start
 
 1. **Clone the repository:**
-git clone https://github.com/yourusername/srpe-intelligence-radar.git
+git clone https://github.com/hiunamw/srpe-intelligence-radar.git
 cd srpe-intelligence-radar
 
 2. **Install dependencies:**
