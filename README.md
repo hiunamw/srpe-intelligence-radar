@@ -1,80 +1,74 @@
-# 📡 SRPE Daily Intelligence Radar
+# 📡 SRPE Intelligence Radar & Automated ETL Pipeline
 
-![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
+![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)
 ![Playwright](https://img.shields.io/badge/playwright-async-green)
 ![Data Extraction](https://img.shields.io/badge/pdfplumber-hybrid_strategy-orange)
-![Data Pipeline](https://img.shields.io/badge/ETL-Daily_Automated-red)
+![Database](https://img.shields.io/badge/PostgreSQL-Neon_Cloud-blue)
+![Automation](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-yellow)
 
-An automated End-to-End data pipeline that monitors, scrapes, and parses the Sales of First-hand Residential Properties Electronic Platform (SRPE) in Hong Kong, delivering real-time Discord alerts and structured Excel reports daily.
+An end-to-end automated data pipeline that monitors, scrapes, parses, and databases the Sales of First-hand Residential Properties Electronic Platform (SRPE) in Hong Kong. It delivers real-time intelligence reports to Discord and maintains a clean transaction database in Cloud SQL.
 
 ## 📖 Project Overview
-本項目旨在自動化追蹤香港一手住宅物業市場的最新動態，為定價團隊及管理層提供極速的市場情報。系統採用 Mono-Repo 設計，每日自動處理繁瑣的政府 PDF 文件。
+本項目旨在自動化追蹤香港一手住宅物業市場的最新動態。系統包含兩大核心引擎：
+1. **情報雷達 (Intelligence Radar)**：每日自動掃描過去 24 小時內上載的四類核心文件 (售樓說明書、價單、銷售安排、成交記錄冊)，並透過 Discord 推送高管級摘要報告。
+2. **ETL 數據管線 (ETL Data Pipeline)**：自動下載最新的「成交記錄冊 (ROT)」PDF，進行深度清洗與結構化轉換，最終透過 Upsert 邏輯寫入 PostgreSQL 雲端數據庫。
 
-## ✨ Core Modules
-
-**1. 🔔 每日情報通知雷達 (`main_radar.py`)**
-* **實時監控**：每日掃描 SRPE 網站，追蹤 24 小時內更新的四大類文件 (SB, PL, SA, ROT)。
-* **Discord 智能推送**：自動排版並透過 Webhook 將摘要推送到群組，內置分段發送器完美繞過 2000 字元限制。
-
-**2. 🧹 每日成交數據處理器 (`main_etl.py`)**
-* **自動化下載 (Extract)**：利用 `playwright` 模擬無頭瀏覽器，自動處理並繞過政府網站免責聲明獲取 Token，批量下載目標樓盤的成交紀錄冊 PDF。
-* **高階數據清洗 (Transform)**：
-  * 深度定制 `pdfplumber`，獨創「混合雙打抽取法 (Hybrid Strategy)」解決表格漏畫底線問題。
-  * 構建強大的 Regex 引擎，精準拆解「子母座」、智能縮寫「洋房/別墅」，並強行攔截「特色戶 (Simplex/Duplex)」等極端排版。
-* **自動化報表 (Load)**：一鍵將雜亂無章的 PDF 轉換為高管級別、自動調整欄寬的 Excel `ROTs_{yesterday}.xlsx`。
+## ✨ Key Features
+* **☁️ 全自動化 CI/CD 部署 (New)**：利用 GitHub Actions 設定 Cron Job，每日清晨自動運行，無需手動介入，並自動將 CSV 備份存檔為 Artifacts。
+* **🗄️ Cloud SQL 數據庫整合 (New)**：透過 `SQLAlchemy` 連接 Neon Serverless Postgres，內置 `ON CONFLICT DO UPDATE` 邏輯，確保數據去重及精準更新。
+* **🧩 模組化架構 (New)**：嚴格遵循 Software Engineering 標準，將系統分拆為 `extractor` (抽取)、`transformer` (轉換) 及 `loader` (載入) 三大獨立模組。
+* **🔐 自動化權限獲取**：利用 `playwright` 模擬無頭瀏覽器，自動處理並繞過政府網站的免責聲明頁面以獲取 API Token 及 Session。
+* **🤖 智能 PDF 數據提取**：深度定制 `pdfplumber`，獨創「混合雙打抽取法 (Hybrid Strategy)」解決政府 PDF 格式不一的問題。
+* **✉️ Discord 智能分段推送**：內置分段發送器 (Message Chunker)，完美繞過 Discord 的 2000 字元限制。
 
 ## 📝 Architecture Diagram
 ![系統架構圖](assets/architecture_diagram.svg)
 
-## 📊 Sample Outputs
-
-本系統每日會自動生成兩種維度的情報輸出，兼顧「即時性」與「分析深度」：
-
-### 1. Discord 實時情報推送 (Real-time Alert)
-自動對長篇幅的銷售安排與樓盤異動進行格式化，並推送到 Discord 群組。
-![Discord 實時推送預覽](assets/discord_demo.png)
-
-### 2. 結構化成交數據庫 (Cleaned ROT Excel)
-從雜亂無章的 PDF 提取並清洗出成交數據，將特例排版（如子母座、特色戶 Simplex/Duplex 等）標準化，並輸出至 Excel。
-
-PDF 原圖 (1): The Aperture
-![PDF 原圖預覽 (1)](assets/rot_demo_pdf_1.png)
-
-PDF 原圖 (2): Southland
-![PDF 原圖預覽 (2)](assets/rot_demo_pdf_2.png)
-
-清洗前
-![Excel 數據清洗結果預覽 (Before)](assets/rot_demo_before.png)
-
-清洗後
-![Excel 數據清洗結果預覽 (After)](assets/rot_demo_after.png)
-
 ## 🛠️ Tech Stack
-* **Language:** Python
-* **Web Scraping:** `playwright`, `requests`, `asyncio`
-* **Data Engineering:** `pandas`, `pdfplumber`, `re` (Regular Expressions)
-* **Output & Notification:** `xlsxwriter`, Discord Webhooks
+* **Language:** Python 3.10
+* **Data Processing:** `pandas`, `pdfplumber`, `re` (Regular Expressions)
+* **Database & ORM:** `sqlalchemy`, `psycopg2-binary`, Neon PostgreSQL
+* **Web Scraping:** `requests`, `playwright`, `asyncio`
+* **DevOps & Security:** GitHub Actions, `python-dotenv`
 
-## 🚀 About Source Code
-> **⚠️ 櫥窗展示聲明 (Showcase Notice)**
-> 為保護商業價值及防止濫用，本 Repository 內的 `main_radar.py` 及 `main_etl.py` 為展示系統架構與代碼風格的閹割版 (Teaser Version)。核心的反爬蟲繞過機制及 PDF 清洗 Regex 已被隱藏。
-> **歡迎在面試中進一步探討完整的技術細節與數據工程思維。**
+## 🚀 Quick Start
 
-### Configuration
-```bash
-pip install requests playwright pdfplumber nest_asyncio pandas xlsxwriter
+1. **Clone the repository:**
+git clone https://github.com/yourusername/srpe-intelligence-radar.git
+cd srpe-intelligence-radar
+
+2. **Install dependencies:**
+pip install -r requirements.txt
+
+3. **Install Playwright browsers (Required for Extractor):**
 playwright install chromium
-```
+
+4. **Environment Setup:**
+- 複製 `.env.example` 並重新命名為 `.env`。
+- 填入您的 `DATABASE_URL` (選填，若留空將進入 Mock 模式以展示清洗邏輯)。
+
+5. **Run the pipeline:**
+python main.py
+
+## 📊 Sample Outputs
+### 1. Real-time Intelligence Delivery (Discord)
+系統會將 API 掃描結果轉化為易讀的 Markdown 報告，並透過 Webhook 實時推送至指定頻道，方便管理層在手機隨時查閱。
+
+![Discord 通知截圖](assets/discord_radar.png)
+
+### 2. Structured Cloud Database (PostgreSQL)
+ETL 管線會將非結構化的 PDF 買賣合約，清洗並正規化 (Normalize) 為關聯式數據，支援後續的 BI 分析及機器學習。
+
+#### 2.1 Source ROT PDF (e.g., Centra Horizon)
+![ROT PDF 截圖](assets/input_pdf.png)
+
+#### 2.2 Raw Data Extraction (Pre-transformation)
+![數據庫結果截圖-前](assets/output_database_before.png)
+
+#### 2.3 Final Structured Database (Post-normalization)
+![數據庫結果截圖-後](assets/output_database_after.png)
 
 ## 🗺️ Next Steps
-- [ ] **支付條款 (Terms) 深度解析 (NLP / Text Mining)**：
-
-  目前系統完整保留了 ROT 的支付條款長文。下一步計劃引入 NLP 或 LLM 技術，從繁雜的條款中萃取出核心特徵，例如「折扣率 (Discount Rate)」、「提早成交回贈 (Cash Rebate)」及「付款期 (Payment Period)」，以計算最真實的折實價 (Net Price)。
-
-- [ ] **車位 (CP) 結構化分離**：
-
-  升級清洗引擎，以正則表達式精準提取車位號碼及數量，並轉換為獨立的數據維度 (`Has_CP`, `CP_Count`)，以提升平均呎價計算的準確度。
-
-- [ ] **數據庫整合與自動化 BI**：
-
-  將每日洗淨的 DataFrame 匯入 PostgreSQL，建立歷史數據倉儲 (Data Warehouse)，並直接串接 PowerBI / Tableau 進行實時可視化。
+- [ ] **BI 視覺化儀表板**：連接 PowerBI 或 Tableau，將 Cloud SQL 內的成交數據轉換為實時數據圖表供管理層參考。
+- [ ] **NLP 支付條款解析**：運用 Text Mining 萃取價單「支付條款 (Terms)」內的實際折實價 (Net Price) 及折扣率。
+- [ ] **機器學習預測**：利用累積的歷史銷售數據，建立迴歸模型分析影響一手物業去貨率的關鍵特徵。
